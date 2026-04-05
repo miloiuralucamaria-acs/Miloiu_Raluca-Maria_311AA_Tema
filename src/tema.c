@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
     FILE *in = fopen(argv[1],"rt");
     FILE *out = fopen(argv[2],"wt");
-    double valoare_anterioara = 0, rand_mediu = 0;
+    double valoare_anterioara = 0, rand_mediu = 0, volatilitate = 0;
     int n;
     N* cap = NULL;
     N* p = NULL;
@@ -48,8 +48,17 @@ int main(int argc, char *argv[])
         valoare_anterioara = p->valoare;
     }
     rand_mediu = (rand_mediu/(n-1));
+    p = cap->urm;
+    for(int incercare = 1; incercare<n; incercare++)
+    {
+        volatilitate = (volatilitate + (pow((p->randament - rand_mediu), 2)));
+        p = p->urm;
+    }
+    volatilitate = (sqrt(volatilitate/(n-1)));
     rand_mediu = trunc(rand_mediu*1000)/1000.0;
+    volatilitate = trunc(volatilitate*1000)/1000.0;
     fprintf(out, "%.3lf\n", rand_mediu);
+    fprintf(out, "%.3lf\n", volatilitate);
     fclose(in);
     fclose(out);
     return 0;
