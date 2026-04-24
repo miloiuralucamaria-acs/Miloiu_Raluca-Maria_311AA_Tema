@@ -130,5 +130,39 @@ int main()
         n3++;
         push(&cap3,nr);
     }
+    while((n1!=0) && (n2!=0) && (n3!=0))
+    {
+        char ziua[50];
+        pret1 = varf(cap1);
+        pret2 = varf(cap2);
+        pret3 = varf(cap3);
+        if((pret1 == pret2)&&(pret1!=pret3))
+        {
+            sprintf(ziua,"%d-%d-%d",pret1,pret2,pret3);
+            add_coada(q,ziua,abs(pret3-pret1),nume3);
+            elem_coada++;
+        }
+        if((pret2 == pret3)&&(pret1!=pret2))
+        {
+            sprintf(ziua,"%d-%d-%d",pret1,pret2,pret3);
+            add_coada(q,ziua,abs(pret1-pret2),nume1);
+            elem_coada++;
+        }
+        if((pret1 == pret3)&&(pret2!=pret1))
+        {
+            sprintf(ziua,"%d-%d-%d",pret1,pret2,pret3);
+            add_coada(q,ziua,abs(pret2-pret1),nume2);
+            elem_coada++;
+        }
+        pop(&cap1);
+        pop(&cap2);
+        pop(&cap3);
+        n1--;
+        n2--;
+        n3--;
+
+    }
+    for(int i=0; i<elem_coada; i++)
+        rem_coada(q,out);
     return 0;
 }
