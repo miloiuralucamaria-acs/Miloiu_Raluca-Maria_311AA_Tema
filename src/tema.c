@@ -13,14 +13,14 @@ typedef struct Nod
 //TASK 2:
 typedef struct piata
 {
-    int nr;
+    float nr;
     struct piata *urm;
 } P;
 typedef struct Elem
 {
     int zi;
-    int abs;
-    char nume[20];
+    float abs;
+    char nume[30];
     struct Elem *urm;
 } NOD;
 typedef struct oportunitate
@@ -29,7 +29,7 @@ typedef struct oportunitate
 } OP;
 
 //PUSH,STIVA
-void push(P**cap,int n)
+void push(P**cap,float n)
 {
     P* new = (P*)malloc(sizeof(P));
     new->nr = n;
@@ -37,23 +37,26 @@ void push(P**cap,int n)
     *cap = new;
 }
 
-//AFLARE CAP STIVA:
-int varf(P *cap)
+
+//DESCOPERA CAPUL STIVEI:
+float varf(P *cap)
 {
     if (cap == NULL) return -1;
     return cap->nr;
 }
 
+
 //SCOATE DIN STIVA
-int pop(P **cap)
+float pop(P **cap)
 {
     if(cap == NULL)return -1;
     P *temp = (*cap);
-    int aux = temp->nr;
+    float aux = temp->nr;
     *cap = (*cap)->urm;
     free(temp);
     return aux;
 }
+
 
 //CREARE COADA
 OP * creare_coada()
@@ -65,8 +68,9 @@ OP * creare_coada()
     return q;
 }
 
+
 //PUSH COADA
-void add_coada(OP*q,int data,int v,char sir[20])
+void add_coada(OP*q,int data,float v,char sir[30])
 {
     NOD* new = (NOD*)malloc(sizeof(NOD));
     new->abs=v;
@@ -82,20 +86,22 @@ void add_coada(OP*q,int data,int v,char sir[20])
     if(q->right == NULL)q->right=q->left;
 }
 
+
 //ELIMIN ELEM DIN COADA
 void rem_coada(OP*q,FILE *out)
 {
     NOD *aux;
-    int d, data;
-    char sir[20];
+    float d;
+    char sir[30];
+    int data;
     aux = q->right;
     d=aux->abs;
     strcpy(sir,aux->nume);
-    data=aux->zi;
+    data = aux->zi;
     q->right = (q->right)->urm;
     if(q->right == NULL)
-    q->left = NULL;
-    fprintf(out,"%d\n%d\n%s\n",data,d,sir);
+        q->left = NULL;
+    fprintf(out,"ziua %d - %.2f -  %s",data,d,sir);
     free (aux);
 }
 
@@ -158,7 +164,6 @@ if(optiune==1)
     fprintf(out1,"%.3lf",S);
     fclose(in1);
     fclose(out1);
-    return 0;
 }
     //TASK2:
     if(optiune== 2)
@@ -168,50 +173,85 @@ if(optiune==1)
     P *cap3 = NULL;
     FILE *in2 = fopen(argv[2],"rt");
     FILE *out2 = fopen(argv[3],"wt");
-    int n1, n2, n3, pret1, pret2, pret3, elem_coada=0;
-    char nume1[20];
-    char nume2[20];
-    char nume3[20];
-    int nr,zi=0;
+    int n1=0, n2=0, n3=0, elem_coada=0, ziua=0;
+    float pret1, pret2, pret3;
+    char nume1[30];
+    char nume2[30];
+    char nume3[30];
+    char linie[30];
+    float nr;
     OP* q;
     q = creare_coada();
-    fscanf(in2, "%s", nume1);
-    while(fscanf(in2,"%d",&nr) ==  1)
+     if(in2 == NULL)
     {
-        n1++;
-        push(&cap1,nr);
+        printf("Fisierul nu se poate deschide!");
+        return 0;
     }
-    fscanf(in2, "%s", nume2);
-    while(fscanf(in2, "%d",&nr) == 1)
+     if(out2 == NULL)
     {
-        n2++;
-        push(&cap2,nr);
+        printf("Fisierul nu se poate deschide!");
+        return 0;
     }
-    fscanf(in2, "%s", nume3);
-    while(fscanf(in2, "%d",&nr) == 1)
+    fgets(nume1,30,in2);    
+    while(fgets(linie,30,in2)!= NULL)
     {
-        n3++;
-        push(&cap3,nr);
+        if(linie[0]>='0' && linie[0]<='9')
+        {
+            n1++;
+            nr = atof(linie);
+            push(&cap1,nr);
+
+        }
+        else
+
+        {
+            strcpy(nume2,linie);
+            break;
+        }
     }
+    while(fgets(linie,30,in2)!= NULL)
+    {
+        if(linie[0]>='0' && linie[0]<='9')
+        {
+            n2++;
+            nr = atof(linie);
+            push(&cap2,nr);
+        }
+        else
+        {
+        strcpy(nume3,linie);
+        break;
+        }
+    }
+    while(fgets(linie,30,in2)!= NULL)
+    {
+        if(linie[0]>='0' && linie[0]<='9')
+        {
+            n3++;
+            nr = atof(linie);
+            push(&cap3,nr);
+        }
+    }
+
     while((n1!=0) && (n2!=0) && (n3!=0))
     {
-        zi++;
+        ziua++;
         pret1 = varf(cap1);
         pret2 = varf(cap2);
         pret3 = varf(cap3);
         if((pret1 == pret2)&&(pret1!=pret3))
-        {
-            add_coada(q,zi,abs(pret3-pret1),nume3);
+        {   
+            add_coada(q,ziua,fabs(pret3-pret1),nume3);
             elem_coada++;
         }
         if((pret2 == pret3)&&(pret1!=pret2))
-        {
-            add_coada(q,zi,abs(pret1-pret2),nume1);
+        {   
+            add_coada(q,ziua,fabs(pret1-pret2),nume1);
             elem_coada++;
         }
         if((pret1 == pret3)&&(pret2!=pret1))
         {
-            add_coada(q,zi,abs(pret2-pret1),nume2);
+            add_coada(q,ziua,fabs(pret2-pret1),nume2);
             elem_coada++;
         }
         pop(&cap1);
@@ -223,9 +263,9 @@ if(optiune==1)
 
     }
     for(int i=0; i<elem_coada; i++)
-        rem_coada(q,out2);
+    rem_coada(q,out2);
     fclose(in2);
     fclose(out2);
-    return 0;
 }
+    return 0;
 }
