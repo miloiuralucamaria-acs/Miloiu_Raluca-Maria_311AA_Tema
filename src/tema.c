@@ -53,6 +53,30 @@ N* insert(N* nod, char data[5], int ziua_finala, int actiune, float pret[50][50]
     return nod;
 }
 
+void traseu(N* root, char nume[11][5], int tr[11][11], int m, int indice)
+{
+    if(root == NULL)return;
+    if(indice != 0)
+    {
+        L *p = root->actiuni;
+        while(p!=NULL)
+        {
+            int i=0;
+            while(i<m)
+            {
+                if(strcmp(nume[i], p->simbol) == 0)
+                {
+                    tr[(root->adancime)-1][i] = indice;
+                    break;
+                }
+                i++;
+            }
+            p = p->next;
+        }
+    }
+    traseu(root->stanga, nume, tr, m, 1);
+    traseu(root->dreapta, nume, tr, m, 2);
+}
 int main(int argc, char *argv[])
 {
     FILE *f = fopen(argv[1],"rt");
@@ -72,8 +96,10 @@ int main(int argc, char *argv[])
     char *element = strtok(sir, ",");
     float pret[50][50];
     N *root = NULL;
-    int n, m=0, adancime = 0;
-
+    int n, m=0, adancime = 0, tr[11][11];
+    //FIXARE MATRICE TRASEU CU 0:
+    for(int i=0;i<m;i++)
+        for(int j=0;j<n-1;j++)tr[i][j]=0;
     //CITIRE VECTOR CU NUME-ACTIUNI:
     while(element != NULL)
     {
@@ -100,6 +126,24 @@ int main(int argc, char *argv[])
     //CREARE ARBORE:
     for(int j=0;j<m;j++)
         root = insert(root, nume[j],n-1,j,pret,adancime);
+
+    //AFISARE LEGATURI:
+    traseu(root,nume,tr,m,0);
+
+    for(int i=0;i<m;i++)
+        for(int k=i+1;k<m;k++)
+        {
+            int egal = 0;
+            for(int j=0;j<n-1;j++)
+            {
+                if(tr[j][i] == tr[j][k])
+                {
+                    egal = 1;
+                    continue;
+                }
+            }
+            if(egal == 0)fprintf(g,"%s-%s\n",nume[i],nume[k]);
+        }
     fclose(f);
     fclose(g);
     return 0;
