@@ -16,6 +16,43 @@ typedef struct Nod
     int adancime;
 }N;
 
+N *Nou_nou(char data[5], int ad)
+{
+    N* nod = (N*) malloc (sizeof(N));
+    nod->actiuni = (L*)malloc(sizeof(L));
+    strcpy(nod->actiuni->simbol, data);
+    nod->actiuni->next = NULL;
+    nod->stanga = nod->dreapta = NULL;
+    nod->adancime = ad;
+    return nod;
+}
+
+void add_lista(N* nod, L* nou, char data[5])
+{
+    L *p = nod->actiuni;
+    while(p->next != NULL) p = p->next;
+    p->next = nou;
+    p = nou;
+}
+
+N* insert(N* nod, char data[5], int ziua_finala, int actiune, float pret[50][50], int adancime)
+{
+    if(nod == NULL) nod = Nou_nou(data, adancime);
+    else if(nod->adancime == adancime)
+    {
+        L* nou = (L*)malloc(sizeof(L));
+        nou->next = NULL;
+        strcpy(nou->simbol, data);
+        add_lista(nod, nou, data);
+    }
+    if(adancime>=ziua_finala)return nod;
+    if(pret[adancime+1][actiune] < pret[adancime][actiune]) 
+        nod->stanga = insert(nod->stanga, data, ziua_finala, actiune, pret, adancime+1);
+    else
+        nod->dreapta = insert(nod->dreapta, data, ziua_finala, actiune, pret, adancime+1);
+    return nod;
+}
+
 int main(int argc, char *argv[])
 {
     FILE *f = fopen(argv[1],"rt");
@@ -35,7 +72,7 @@ int main(int argc, char *argv[])
     char *element = strtok(sir, ",");
     float pret[50][50];
     N *root = NULL;
-    int n, m=0;
+    int n, m=0, adancime = 0;
 
     //CITIRE VECTOR CU NUME-ACTIUNI:
     while(element != NULL)
@@ -59,6 +96,10 @@ int main(int argc, char *argv[])
         }
         n++;
     }
+
+    //CREARE ARBORE:
+    for(int j=0;j<m;j++)
+        root = insert(root, nume[j],n-1,j,pret,adancime);
     fclose(f);
     fclose(g);
     return 0;

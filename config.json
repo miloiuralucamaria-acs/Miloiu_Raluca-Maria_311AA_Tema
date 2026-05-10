@@ -1,6 +1,6 @@
 {
 	"source_path": "./src",
-	"executable_path": "./tema",
+	"executable_path": "./src/tema",
 	"input_path": "./in",
 	"output_path": "./out",
 	"ref_path": "./ref",
