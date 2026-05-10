@@ -1,30 +1,4 @@
 #include "referinte.h"
-/*//TASK 1:
-typedef struct Nod 
-{
-    double valoare;
-    double randament;
-    struct Nod *urm;
-}N;
-
-//TASK 2:
-typedef struct piata
-{
-    float nr;
-    struct piata *urm;
-} P;
-typedef struct Elem
-{
-    int zi;
-    float abs;
-    char nume[30];
-    struct Elem *urm;
-} NOD;
-typedef struct oportunitate
-{
-    NOD *left,*right;
-} OP;
-*/
 //PUSH,STIVA
 void push(P**cap,float n)
 {
@@ -67,7 +41,7 @@ OP * creare_coada()
 
 
 //PUSH COADA
-void add_coada(OP*q,int data,float v,char sir[30])
+void add_coada(OP*q,int data,float v, char sir[30])
 {
     NOD* new = (NOD*)malloc(sizeof(NOD));
     new->abs=v;
@@ -98,6 +72,6 @@ void rem_coada(OP*q,FILE *out)
     q->right = (q->right)->urm;
     if(q->right == NULL)
         q->left = NULL;
-    fprintf(out,"ziua %d - %.2f -  %s",data,d,sir);
+    fprintf(out,"ziua %d - %.2f - %s",data,d,sir);
     free (aux);
 }
